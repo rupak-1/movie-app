@@ -26,12 +26,31 @@ const App = () => {
     getMovieRequest(searchValue);
   }, [searchValue]);
 
+  useEffect(() => {
+    const movieFavorites = JSON.parse(
+      localStorage.getItem('react-movie-app-favorites')
+    );
+
+    setFavorites(movieFavorites);
+  }, [])
+
+  const saveToLocalStorage = (items) => {
+    localStorage.setItem('react-movie-app-favorites', JSON.stringify(items))
+  }
+
   const AddFavoriteMovie = (movie) => {
     const newFavoriteList = [...favorites, movie]
     setFavorites(newFavoriteList);
-    console.log(newFavoriteList);
+    saveToLocalStorage(newFavoriteList);
   }
 
+  const removeFavoriteMovie = (movie) => {
+    const newFavoriteList = favorites.filter(
+      (favorite) => favorite.imdbID !== movie.imdbID
+    );
+    setFavorites(newFavoriteList);
+    saveToLocalStorage(newFavoriteList);
+  }
 
 
   return (
@@ -42,13 +61,13 @@ const App = () => {
       </div>
 
       <div className='row'>
-        <MovieList movies={movies} handleFavoritesClick={AddFavoriteMovie} favoriteComponent={AddFavorite}/>
+        <MovieList movies={movies} handleFavoritesClick={AddFavoriteMovie} favoriteComponent={AddFavorite} />
       </div>
       <div className='row d-flex align-items-center mt-4 mb-4'>
         <MovieListHeading heading='Favorites' />
       </div>
       <div className='row'>
-        <MovieList movies={favorites} handleFavoritesClick={AddFavoriteMovie} favoriteComponent={RemoveFavorites}/>
+        <MovieList movies={favorites} handleFavoritesClick={removeFavoriteMovie} favoriteComponent={RemoveFavorites} />
       </div>
     </div>
   );
